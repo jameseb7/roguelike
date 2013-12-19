@@ -23,3 +23,11 @@ func drawSymbol(x, y int, s types.Symbol) {
 		C.mvaddch(cy, cx, '\000')
 	}
 }
+
+func drawLevel(l types.Level) {
+	for x := 0; x < l.XWidth(); x++ {
+		for y := 0; y < l.YWidth(); y++ {
+			drawSymbol(x, y, l.SymbolAt(x, y))
+		}
+	}
+}

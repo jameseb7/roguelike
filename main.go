@@ -31,11 +31,7 @@ func main() {
 	var p = new(player.Player)
 	l.Put(p, 40, 10)
 
-	for x := 0; x < l.XWidth(); x++ {
-		for y := 0; y < l.YWidth(); y++ {
-			drawSymbol(x, y, l.SymbolAt(x, y))
-		}
-	}
+	drawLevel(l)
 	C.getch()
 
 }
