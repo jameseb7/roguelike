@@ -34,9 +34,34 @@ func (bl baseLevel) IsOccupied(x, y int) bool {
 	return bl[x][y].occupant != nil
 }
 
-func (bl *baseLevel) Put(e types.Entity, x, y int) {
+func (bl *baseLevel) Put(e types.Entity, x, y int) (ok bool) {
+	if x < 0 || x > defaultXWidth || y < 0 || y > defaultYWidth {
+		return false
+	}
+
+	if bl.IsOccupied(x, y) {
+		return false
+	}
+
 	bl[x][y].occupant = e
 	e.SetX(x)
 	e.SetY(y)
 	e.SetParent(bl)
+	return true
+}
+
+func (bl *baseLevel) Move(e types.Entity, dir types.Direction) (ok bool) {
+	x, y := e.X(), e.Y()
+
+	//check the entity can sucessfully be placed in the new location first
+	dirXYZ := types.Directions[dir]
+	ok = bl.Put(e, x+dirXYZ.X, y+dirXYZ.Y)
+	if ok == false {
+		return
+	}
+
+	//now remove the entity from its old location
+	bl[x][y].occupant = nil
+
+	return
 }

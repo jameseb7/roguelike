@@ -2,6 +2,7 @@ package main
 
 import "github.com/jameseb7/roguelike/levels"
 import "github.com/jameseb7/roguelike/player"
+import "github.com/jameseb7/roguelike/types"
 
 //#cgo LDFLAGS: -lncurses
 //#include <curses.h>
@@ -31,6 +32,26 @@ func main() {
 	var p = new(player.Player)
 	l.Put(p, 40, 10)
 
+	drawLevel(l)
+	C.getch()
+
+	l.Move(p, types.NORTH)
+	drawLevel(l)
+	C.getch()
+
+	l.Move(p, types.EAST)
+	drawLevel(l)
+	C.getch()
+
+	l.Move(p, types.SOUTH)
+	drawLevel(l)
+	C.getch()
+
+	l.Move(p, types.WEST)
+	drawLevel(l)
+	C.getch()
+
+	l.Move(p, types.NORTHEAST)
 	drawLevel(l)
 	C.getch()
 

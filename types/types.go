@@ -12,20 +12,6 @@ const ( //Monster symbols
 	PLAYER Symbol = (1 << 16) + iota
 )
 
-type Direction uint8
-
-const (
-	NORTH Direction = iota
-	SOUTH
-	EAST
-	WEST
-
-	NORTHEAST
-	NORTHWEST
-	SOUTHEAST
-	SOUTHWEST
-)
-
 type Level interface {
 	SymbolAt(x, y int) Symbol
 
@@ -34,7 +20,8 @@ type Level interface {
 
 	IsOccupied(x, y int) bool
 
-	Put(e Entity, x, y int)
+	Put(e Entity, x, y int) (ok bool)
+	Move(e Entity, dir Direction) (ok bool)
 }
 
 type Entity interface {
