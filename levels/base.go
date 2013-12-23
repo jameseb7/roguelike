@@ -35,7 +35,7 @@ func (bl baseLevel) IsOccupied(x, y int) bool {
 }
 
 func (bl *baseLevel) Put(e types.Entity, x, y int) (ok bool) {
-	if x < 0 || x > defaultXWidth || y < 0 || y > defaultYWidth {
+	if x < 0 || x >= defaultXWidth || y < 0 || y >= defaultYWidth {
 		return false
 	}
 
