@@ -10,6 +10,15 @@ type cell struct {
 	occupant types.Entity
 }
 
+func blocksPlacement(cellType types.Symbol) bool {
+	switch cellType {
+	case types.HWALL, types.VWALL:
+		return true
+	default:
+		return false
+	}
+}
+
 type baseLevel [defaultXWidth][defaultYWidth]cell
 
 func (bl baseLevel) SymbolAt(x, y int) types.Symbol {
@@ -39,9 +48,14 @@ func (bl *baseLevel) Put(e types.Entity, x, y int) (ok bool) {
 		return false
 	}
 
+
 	if bl.IsOccupied(x, y) {
 		return false
 	}
+	if blocksPlacement(bl[x][y].cellType) {
+		return false
+	}
+	
 
 	bl[x][y].occupant = e
 	e.SetX(x)
