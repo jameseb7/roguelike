@@ -48,6 +48,14 @@ func main() {
 			runCommand(1, MOVE, int(types.EAST))
 		case C.KEY_LEFT, 'h', '4':
 			runCommand(1, MOVE, int(types.WEST))
+		case 'y', '7':
+			runCommand(1, MOVE, int(types.NORTHWEST))
+		case 'u', '9':
+			runCommand(1, MOVE, int(types.NORTHEAST))
+		case 'm', '3':
+			runCommand(1, MOVE, int(types.SOUTHEAST))
+		case 'n', '1':
+			runCommand(1, MOVE, int(types.SOUTHWEST))
 		case 'q':
 			quit = true
 		}
