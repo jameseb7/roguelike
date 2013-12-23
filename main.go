@@ -24,35 +24,33 @@ func endCurses() {
 	C.endwin()
 }
 
+var p *player.Player
+
+
 func main() {
 	initCurses()
 	defer endCurses()
 
 	var l = levels.Make(levels.TEST)
-	var p = new(player.Player)
+	p = new(player.Player)
 	l.Put(p, 40, 10)
 
-	drawLevel(l)
-	C.getch()
-
-	l.Move(p, types.NORTH)
-	drawLevel(l)
-	C.getch()
-
-	l.Move(p, types.EAST)
-	drawLevel(l)
-	C.getch()
-
-	l.Move(p, types.SOUTH)
-	drawLevel(l)
-	C.getch()
-
-	l.Move(p, types.WEST)
-	drawLevel(l)
-	C.getch()
-
-	l.Move(p, types.NORTHEAST)
-	drawLevel(l)
-	C.getch()
+	var quit = false
+	for !quit {
+		drawLevel(l)
+		
+		switch ch := C.getch(); ch {
+		case C.KEY_UP, 'k', '8':
+			runCommand(1, MOVE, int(types.NORTH))
+		case C.KEY_DOWN, 'j', '2':
+			runCommand(1, MOVE, int(types.SOUTH))
+		case C.KEY_RIGHT, 'l', '6':
+			runCommand(1, MOVE, int(types.EAST))
+		case C.KEY_LEFT, 'h', '4':
+			runCommand(1, MOVE, int(types.WEST))
+		case 'q':
+			quit = true
+		}
+	}
 
 }
