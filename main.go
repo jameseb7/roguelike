@@ -1,6 +1,6 @@
 package main
 
-import "github.com/jameseb7/roguelike/levels"
+import "github.com/jameseb7/roguelike/regions"
 import "github.com/jameseb7/roguelike/player"
 import "github.com/jameseb7/roguelike/types"
 
@@ -31,13 +31,13 @@ func main() {
 	initCurses()
 	defer endCurses()
 
-	var l = levels.Make(levels.TEST)
+	var r = regions.Make(regions.TEST)
 	p = new(player.Player)
-	l.Put(p, 40, 10)
+	r.Level(0).Put(p, 40, 10)
 
 	var quit = false
 	for !quit {
-		drawLevel(l)
+		drawCurrentLevel()
 		
 		switch ch := C.getch(); ch {
 		case C.KEY_UP, 'k', '8':

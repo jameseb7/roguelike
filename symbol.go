@@ -31,3 +31,7 @@ func drawLevel(l types.Level) {
 		}
 	}
 }
+
+func drawCurrentLevel() {
+	drawLevel(p.CurrentLevel)
+}

@@ -19,11 +19,20 @@ func blocksPlacement(cellType types.Symbol) bool {
 	}
 }
 
-type baseLevel [defaultXWidth][defaultYWidth]cell
+type baseLevel struct {
+	index int
+	parent types.Region
+	cells [defaultXWidth][defaultYWidth]cell
+	nextLevels [types.NUM_DIRECTIONS]types.Level
+}
+
+func (bl baseLevel) Index() int {
+	return bl.index
+}
 
 func (bl baseLevel) SymbolAt(x, y int) types.Symbol {
-	if bl[x][y].occupant != nil {
-		return bl[x][y].occupant.Symbol()
+	if bl.cells[x][y].occupant != nil {
+		return bl.cells[x][y].occupant.Symbol()
 	}
 
 	if x < 0 || x > defaultXWidth {
@@ -33,14 +42,14 @@ func (bl baseLevel) SymbolAt(x, y int) types.Symbol {
 		return types.BLANK
 	}
 
-	return bl[x][y].cellType
+	return bl.cells[x][y].cellType
 }
 
 func (bl baseLevel) XWidth() int { return defaultXWidth }
 func (bl baseLevel) YWidth() int { return defaultYWidth }
 
 func (bl baseLevel) IsOccupied(x, y int) bool {
-	return bl[x][y].occupant != nil
+	return bl.cells[x][y].occupant != nil
 }
 
 func (bl *baseLevel) Put(e types.Entity, x, y int) (ok bool) {
@@ -52,12 +61,12 @@ func (bl *baseLevel) Put(e types.Entity, x, y int) (ok bool) {
 	if bl.IsOccupied(x, y) {
 		return false
 	}
-	if blocksPlacement(bl[x][y].cellType) {
+	if blocksPlacement(bl.cells[x][y].cellType) {
 		return false
 	}
 	
 
-	bl[x][y].occupant = e
+	bl.cells[x][y].occupant = e
 	e.SetX(x)
 	e.SetY(y)
 	e.SetParent(bl)
@@ -75,7 +84,14 @@ func (bl *baseLevel) Move(e types.Entity, dir types.Direction) (ok bool) {
 	}
 
 	//now remove the entity from its old location
-	bl[x][y].occupant = nil
+	bl.cells[x][y].occupant = nil
 
 	return
+}
+
+func (bl *baseLevel) NextLevel(dir types.Direction) types.Level {
+	if bl.nextLevels[dir] == nil {
+		bl.nextLevels[dir] = bl.parent.NextLevel(bl.Index(), dir)
+	}
+	return bl.nextLevels[dir]
 }
