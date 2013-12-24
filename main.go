@@ -41,21 +41,21 @@ func main() {
 		
 		switch ch := C.getch(); ch {
 		case C.KEY_UP, 'k', '8':
-			runCommand(1, MOVE, int(types.NORTH))
+			runCommand(1, MOVE, types.NORTH)
 		case C.KEY_DOWN, 'j', '2':
-			runCommand(1, MOVE, int(types.SOUTH))
+			runCommand(1, MOVE, types.SOUTH)
 		case C.KEY_RIGHT, 'l', '6':
-			runCommand(1, MOVE, int(types.EAST))
+			runCommand(1, MOVE, types.EAST)
 		case C.KEY_LEFT, 'h', '4':
-			runCommand(1, MOVE, int(types.WEST))
+			runCommand(1, MOVE, types.WEST)
 		case 'y', '7':
-			runCommand(1, MOVE, int(types.NORTHWEST))
+			runCommand(1, MOVE, types.NORTHWEST)
 		case 'u', '9':
-			runCommand(1, MOVE, int(types.NORTHEAST))
+			runCommand(1, MOVE, types.NORTHEAST)
 		case 'm', '3':
-			runCommand(1, MOVE, int(types.SOUTHEAST))
+			runCommand(1, MOVE, types.SOUTHEAST)
 		case 'n', '1':
-			runCommand(1, MOVE, int(types.SOUTHWEST))
+			runCommand(1, MOVE, types.SOUTHWEST)
 		case 'q':
 			quit = true
 		}

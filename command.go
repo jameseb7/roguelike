@@ -14,7 +14,13 @@ runCommand(n, c, args...) performs the command, c, n times
 with args as arguments. Commands arguments are taken as integers
 and are expected to be correct for the given command
 */
-func runCommand(n int, c command, args ...int) (quit bool, err error) {
+func runCommand(n int, c command, args ...interface{}) (quit bool, err error) {
+	defer func() {
+		//catch panics so all errors are signalled by err
+		if e := recover(); e != nil {
+			err = e.(error)
+		}
+	}()
 	for i := 0; i < n; i++ {
 		switch c {
 		case NONE:
@@ -24,7 +30,7 @@ func runCommand(n int, c command, args ...int) (quit bool, err error) {
 				err = errors.New("Too few arguments for MOVE, require 1")
 				return
 			}
-			p.CurrentLevel.Move(p, types.Direction(args[0]))
+			p.CurrentLevel.Move(p, args[0].(types.Direction))
 		} 
 	}
 	return
