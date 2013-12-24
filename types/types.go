@@ -7,6 +7,8 @@ const ( //Terrain symbols
 	FLOOR
 	HWALL
 	VWALL
+	UPSTAIR
+	DOWNSTAIR
 )
 const ( //Monster symbols
 	PLAYER Symbol = (1 << 16) + iota

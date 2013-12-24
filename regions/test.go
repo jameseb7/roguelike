@@ -9,7 +9,13 @@ type testRegion struct{
 
 func (tr *testRegion) Level(index int) types.Level {
 	if tr.lvls[index] == nil {
-		tr.lvls[index] = levels.Make(levels.TEST, tr, index)
+		if index == 0 {
+			tr.lvls[index] = levels.Make(levels.TESTTOP, tr, index)
+		} else if  index == tr.Length()-1 {
+			tr.lvls[index] = levels.Make(levels.TESTBOTTOM, tr, index)
+		} else {
+			tr.lvls[index] = levels.Make(levels.TEST, tr, index)
+		}
 	}
 	return tr.lvls[index]
 }

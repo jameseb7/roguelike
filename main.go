@@ -1,5 +1,8 @@
 package main
 
+import "math/rand"
+import "time"
+
 import "github.com/jameseb7/roguelike/regions"
 import "github.com/jameseb7/roguelike/player"
 import "github.com/jameseb7/roguelike/types"
@@ -28,6 +31,8 @@ var p *player.Player
 
 
 func main() {
+	rand.Seed(time.Now().Unix())
+
 	initCurses()
 	defer endCurses()
 
@@ -56,6 +61,10 @@ func main() {
 			runCommand(1, MOVE, types.SOUTHEAST)
 		case 'n', '1':
 			runCommand(1, MOVE, types.SOUTHWEST)
+		case '<':
+			runCommand(1, MOVE, types.UP)
+		case '>':
+			runCommand(1, MOVE, types.DOWN)
 		case 'q':
 			quit = true
 		}

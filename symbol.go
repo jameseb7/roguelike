@@ -17,6 +17,10 @@ func drawSymbol(x, y int, s types.Symbol) {
 		C.mvaddch(cy, cx, '-')
 	case types.VWALL:
 		C.mvaddch(cy, cx, '|')
+	case types.UPSTAIR:
+		C.mvaddch(cy, cx, '<')
+	case types.DOWNSTAIR:
+		C.mvaddch(cy, cx, '>')
 	case types.PLAYER:
 		C.mvaddch(cy, cx, '@')
 	default:

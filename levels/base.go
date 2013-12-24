@@ -76,16 +76,60 @@ func (bl *baseLevel) Put(e types.Entity, x, y int) (ok bool) {
 func (bl *baseLevel) Move(e types.Entity, dir types.Direction) (ok bool) {
 	x, y := e.X(), e.Y()
 
+	//handle upstair
+	if (dir == types.UP) && (bl.cells[x][y].cellType == types.UPSTAIR) {
+		return bl.moveNext(e, dir)
+	}
+	//handle downstair
+	if (dir == types.DOWN) && (bl.cells[x][y].cellType == types.DOWNSTAIR) {
+		return bl.moveNext(e, dir)
+	}
+
 	//check the entity can sucessfully be placed in the new location first
 	dirXYZ := types.Directions[dir]
 	ok = bl.Put(e, x+dirXYZ.X, y+dirXYZ.Y)
 	if ok == false {
 		return
 	}
-
+	
 	//now remove the entity from its old location
 	bl.cells[x][y].occupant = nil
-
+	
+	return
+}
+	
+func (bl *baseLevel) moveNext(e types.Entity, dir types.Direction) (ok bool) {
+	next := bl.NextLevel(dir)
+	x, y := e.X(), e.Y()
+	
+	switch dir {
+	case types.HERE, types.UP, types.DOWN:
+		ok = next.Put(e, x, y)
+	case types.NORTH, types.UPNORTH, types.DOWNNORTH:
+		ok = next.Put(e, x, next.YWidth()-1)
+	case types.SOUTH, types.UPSOUTH, types.DOWNSOUTH:
+		ok = next.Put(e, x, 0)
+	case types.EAST, types.UPEAST, types.DOWNEAST:
+		ok = next.Put(e, 0, y)
+	case types.WEST, types.UPWEST, types.DOWNWEST:
+		ok = next.Put(e, next.XWidth()-1, y)
+	case types.NORTHEAST, types.UPNORTHEAST, types.DOWNNORTHEAST:
+		ok = next.Put(e, 0, next.YWidth()-1)
+	case types.NORTHWEST, types.UPNORTHWEST, types.DOWNNORTHWEST:
+		ok = next.Put(e, next.XWidth()-1, next.YWidth()-1)
+	case types.SOUTHEAST, types.UPSOUTHEAST, types.DOWNSOUTHEAST:
+		ok = next.Put(e, 0, 0)
+	case types.SOUTHWEST, types.UPSOUTHWEST, types.DOWNSOUTHWEST:
+		ok = next.Put(e, next.XWidth()-1, 0)
+	}
+	
+	if ok == false {
+		return
+	}
+	
+	//emove the entity from its old location
+	bl.cells[x][y].occupant = nil
+	
 	return
 }
 
