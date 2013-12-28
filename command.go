@@ -2,6 +2,8 @@ package main
 
 import "errors"
 import "github.com/jameseb7/roguelike/types"
+import "github.com/jameseb7/roguelike/actions"
+
 
 type command int
 const(
@@ -30,7 +32,9 @@ func runCommand(n int, c command, args ...interface{}) (quit bool, err error) {
 				err = errors.New("Too few arguments for MOVE, require 1")
 				return
 			}
-			p.CurrentLevel.Move(p, args[0].(types.Direction))
+			move := new(actions.Move)
+			move.Dir = args[0].(types.Direction)
+			actionChannel <- move
 		} 
 	}
 	return

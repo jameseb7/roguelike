@@ -45,5 +45,15 @@ type Entity interface {
 
 	Symbol() Symbol
 
+	Parent() Level
 	SetParent(parent Level)
+}
+
+type Actor interface{
+	Act()
+}
+
+type Action interface{
+	SetPatient(e Entity) //sets an Entity for the actor to act upon
+	DoAction() (complete bool)
 }

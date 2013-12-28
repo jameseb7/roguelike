@@ -27,8 +27,9 @@ func endCurses() {
 	C.endwin()
 }
 
+var actionChannel = make(chan types.Action, 1)
 var p *player.Player
-
+var quit = false
 
 func main() {
 	rand.Seed(time.Now().Unix())
@@ -38,9 +39,11 @@ func main() {
 
 	var r = regions.Make(regions.TEST)
 	p = new(player.Player)
+	p.SetActionChannel(actionChannel)
 	r.Level(0).Put(p, 40, 10)
 
-	var quit = false
+	go mainLoop()
+
 	for !quit {
 		drawCurrentLevel()
 		
@@ -70,4 +73,10 @@ func main() {
 		}
 	}
 
+}
+
+func mainLoop() {
+	for !quit {
+		p.Act()
+	}
 }
