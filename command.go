@@ -34,10 +34,18 @@ func runCommand(n int, c command, args ...interface{}) (quit bool, err error) {
 			}
 			move := new(actions.Move)
 			move.Dir = args[0].(types.Direction)
-			actionChannel <- move
+			p.SetAction(move)
 		} 
+		for !stop {
+			p.Act()
+		}
+		stop = false
 	}
+	
 	return
 }
-	
-	
+
+var stop = false
+func setStop() {
+	stop = true
+}

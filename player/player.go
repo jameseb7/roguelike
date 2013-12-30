@@ -16,24 +16,31 @@ func (p *Player) SetY(y int)                   { p.y = y }
 func (p *Player) Symbol() types.Symbol         { return types.PLAYER }
 func (p *Player) Parent() types.Level { return p.CurrentLevel}
 func (p *Player) SetParent(parent types.Level) { p.CurrentLevel = parent }
-func (p *Player) SetActionChannel(ac <-chan types.Action) { p.actionChannel = ac }
+func (p *Player) SetAction(a types.Action) { 
+	a.SetPatient(p)
+	p.currentAction = a
+}
+
+func SetQuitCallback(callback func()) {
+	quit = callback
+}
+
+func SetStopCallback(callback func()) {
+	stop = callback
+}
+
+var quit func()
+var stop func()
 
 //Player implements types.Actor
 func (p *Player) Act() {
 	if p.currentAction == nil {
-		if p.actionChannel == nil{
-			panic("nil actionChannel for Player")
-		}
-
-		p.currentAction = <-p.actionChannel
-		//if ok == false {
-		//	panic("closed actionChannel for Player")
-		//}
-		p.currentAction.SetPatient(p)
+		stop()
+		return 
 	}	
 	
 	complete := p.currentAction.DoAction()
-	if complete == true {
+	if complete {
 		p.currentAction = nil //let the action be garbage collected
 	}
 	
