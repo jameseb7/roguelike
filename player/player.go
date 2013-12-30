@@ -16,8 +16,7 @@ func (p *Player) SetY(y int)                   { p.y = y }
 func (p *Player) Symbol() types.Symbol         { return types.PLAYER }
 func (p *Player) Parent() types.Level { return p.CurrentLevel}
 func (p *Player) SetParent(parent types.Level) { p.CurrentLevel = parent }
-func (p *Player) SetAction(a types.Action) { 
-	a.SetPatient(p)
+func (p *Player) SetAction(a types.Action) {
 	p.currentAction = a
 }
 

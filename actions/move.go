@@ -4,14 +4,10 @@ import "github.com/jameseb7/roguelike/types"
 
 type Move struct {
 	Dir types.Direction
-	patient types.Entity
-}
-
-func (m *Move) SetPatient(e types.Entity) {
-	m.patient = e
+	Object types.Entity
 }
 
 func (m *Move) DoAction() (complete bool) {
-	m.patient.Parent().Move(m.patient, m.Dir)
+	m.Object.Parent().Move(m.Object, m.Dir)
 	return true
 }

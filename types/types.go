@@ -54,6 +54,5 @@ type Actor interface{
 }
 
 type Action interface{
-	SetPatient(e Entity) //sets an Entity for the actor to act upon
 	DoAction() (complete bool)
 }

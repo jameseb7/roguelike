@@ -34,6 +34,7 @@ func runCommand(n int, c command, args ...interface{}) (quit bool, err error) {
 			}
 			move := new(actions.Move)
 			move.Dir = args[0].(types.Direction)
+			move.Object = p
 			p.SetAction(move)
 		} 
 		for !stop {
