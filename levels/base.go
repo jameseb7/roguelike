@@ -134,7 +134,7 @@ func (bl *baseLevel) moveNext(e types.Entity, dir types.Direction) (ok bool) {
 	//if the entity is also an actor then 
 	//it needs registering with the new level
 	//and removing from this one
-	if a, ok := e.(types.Actor); ok {
+	if a, ok2 := e.(types.Actor); ok2 {
 		bl.RemoveActor(a)
 		next.AddActor(a)
 	}
