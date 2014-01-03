@@ -39,6 +39,7 @@ func main() {
 	var r = regions.Make(regions.TEST)
 	p = new(player.Player)
 	r.Level(0).Put(p, 40, 10)
+	r.Level(0).AddActor(p)
 
 	player.SetStopCallback(setStop)
 

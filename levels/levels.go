@@ -28,6 +28,7 @@ func Make(t LevelType, parent types.Region, index int) types.Level {
 		}
 		b.parent = parent
 		b.index = index
+		b.scheduler = newScheduler()
 		if t != TESTTOP {
 			b.cells[17+rand.Intn(6)][7+rand.Intn(6)].cellType = types.UPSTAIR
 		}

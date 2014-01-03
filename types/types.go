@@ -34,6 +34,11 @@ type Level interface {
 	Move(e Entity, dir Direction) (ok bool)
 
 	NextLevel(dir Direction) Level
+
+	AddActor(a Actor)
+	RemoveActor(a Actor)
+	Run()
+	
 }
 
 type Entity interface {

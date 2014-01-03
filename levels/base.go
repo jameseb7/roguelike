@@ -20,6 +20,7 @@ func blocksPlacement(cellType types.Symbol) bool {
 }
 
 type baseLevel struct {
+	*scheduler
 	index int
 	parent types.Region
 	cells [defaultXWidth][defaultYWidth]cell
@@ -64,12 +65,12 @@ func (bl *baseLevel) Put(e types.Entity, x, y int) (ok bool) {
 	if blocksPlacement(bl.cells[x][y].cellType) {
 		return false
 	}
-	
 
 	bl.cells[x][y].occupant = e
 	e.SetX(x)
 	e.SetY(y)
 	e.SetParent(bl)
+
 	return true
 }
 
@@ -94,7 +95,7 @@ func (bl *baseLevel) Move(e types.Entity, dir types.Direction) (ok bool) {
 	
 	//now remove the entity from its old location
 	bl.cells[x][y].occupant = nil
-	
+
 	return
 }
 	
@@ -127,8 +128,16 @@ func (bl *baseLevel) moveNext(e types.Entity, dir types.Direction) (ok bool) {
 		return
 	}
 	
-	//emove the entity from its old location
+	//remove the entity from its old location
 	bl.cells[x][y].occupant = nil
+
+	//if the entity is also an actor then 
+	//it needs registering with the new level
+	//and removing from this one
+	if a, ok := e.(types.Actor); ok {
+		bl.RemoveActor(a)
+		next.AddActor(a)
+	}
 	
 	return
 }
@@ -139,3 +148,4 @@ func (bl *baseLevel) NextLevel(dir types.Direction) types.Level {
 	}
 	return bl.nextLevels[dir]
 }
+

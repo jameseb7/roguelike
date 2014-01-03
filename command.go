@@ -38,7 +38,7 @@ func runCommand(n int, c command, args ...interface{}) (quit bool, err error) {
 			p.SetAction(move)
 		} 
 		for !stop {
-			p.Act()
+			p.CurrentLevel.Run()
 		}
 		stop = false
 	}
