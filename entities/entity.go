@@ -1,5 +1,7 @@
 package entities
 
+import "action"
+
 type ID uint64
 
 type Entity interface {
@@ -14,4 +16,9 @@ func NewEntityID() ID {
 		panic("Out of Entity IDs")
 	}
 	return currentID
+}
+
+type Actor interface {
+	Entity
+	NextAction() action.Action
 }
