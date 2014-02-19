@@ -8,6 +8,6 @@ type Player struct{}
 func (Player) ActionType(){}
 
 type Move struct {
-	dir Direction
+	Dir Direction
 }
 func (Move) ActionType(){}
