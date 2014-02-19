@@ -1,4 +1,4 @@
-package entites
+package entity
 
 type Player {
 	id EntityID
