@@ -1,6 +1,6 @@
 package entity
 
-import "action"
+import "github.com/jameseb7/roguelike/action"
 
 type ID uint64
 
