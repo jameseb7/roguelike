@@ -10,7 +10,7 @@ type Level interface{
 	SymbolAt(x, y int) symbol.Symbol
 
 	Put(e entity.Entity, x, y int) (ok bool)
-	Remove(e entity.ID) (ok bool)
+	Remove(e entity.ID) (ok bool, e entity.Entity)
 
 	Run() action.Action
 }
@@ -33,7 +33,8 @@ type entityMetadata struct{
 type baseLevel struct{
 	cells [XWidth][YWidth]cellType
 	entities map[entity.ID] *entityMetadata
-	actors list.List
+	actors *list.List
+	currentActor *list.Element
 }
 
 func (bl *baseLevel) SymbolAt(x,y int) symbol.Symbol {
@@ -55,7 +56,7 @@ func (bl *baseLevel) Put(e entity.Entity, x, y int) (ok bool) {
 		return false
 	}
 
-	if bl.cells[x][y].occupant != null {
+	if bl.cells[x][y].occupant != nil {
 		return false
 	}
 
@@ -73,4 +74,68 @@ func (bl *baseLevel) Put(e entity.Entity, x, y int) (ok bool) {
 	
 	bl.entities[e.EntityID()] = metadata
 	return true
+}
+
+func (bl *baseLevel) Remove(eid entity.ID) (ok bool, e entity.Entity) {
+	metadata := bl.entites[eid]
+	if metadata == nil {
+		return false
+	}
+
+	bl.cells[xPosition][yPosition].occupant = nil
+	if metadata.turnSlot != nil {
+		_ = bl.actors.remove(metadata.turnSlot)
+	}
+	e = metadata.entity
+	delete(bl.entites, eid)
+
+	ok = true
+	return
+}
+
+func (bl *baseLevel) Run() action.Action {
+	for {
+		for ; bl.currentActor != nil; e = e.Next() {
+			eid := bl.currentActor.Value.(entity.ID)
+			e := bl.entites[eid]
+			if e == nil {
+				bl.actors.Remove(bl.currentActor)
+			}
+			a := e.entity.(Actor)
+			switch act := a.NextAction().(type) {
+			case Player: 
+				return act
+			case Move: 
+				bl.move(eid, act.Dir)
+			}
+		}
+		bl.currentActor = bl.actors.Front()
+	}
+}
+
+func (bl *baseLevel) move(eid entity.ID, dir action.Direction) {
+	switch dir {
+	case action.North, action.South, action.East, action.West:
+		fallthrough
+	case action.NorthEast, action.NorthWest:
+		fallthrough
+	case action.SouthEast, action.SouthWest:
+		metadata := bl.entities[eid]
+		offset := action.Directions[dir]
+		newx := metadata.xPosition + offset.X
+		newy := metadata.yPosition + offset.Y
+		if (newx < 0) || (newx >= XWidth) || 
+			(newy < 0) || (newy >= YWidth) {
+			return
+		}
+
+		if bl.cells[newx][newy].occupant != nil {
+			return
+		}
+
+		
+		bl.cells[newx][newy].occupant = eid
+		bl.cells[metadata.xPosition][metadata.yPosition].occupant = nil
+	}
+	return
 }
