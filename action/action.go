@@ -1,5 +1,7 @@
 package action
 
+import "direction"
+
 type Action interface {
 	ActionType() //no-op to distinguish Actions
 }
@@ -8,7 +10,7 @@ type Player struct{}
 func (Player) ActionType(){}
 
 type Move struct {
-	Dir Direction
+	Dir direction.Direction
 }
 func (Move) ActionType(){}
 

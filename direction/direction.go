@@ -1,4 +1,4 @@
-package action
+package direction
 
 type Direction uint8
 

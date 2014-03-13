@@ -116,15 +116,15 @@ func (bl *baseLevel) Run() action.Action {
 	}
 }
 
-func (bl *baseLevel) move(eid entity.ID, dir action.Direction) {
+func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) {
 	switch dir {
-	case action.North, action.South, action.East, action.West:
+	case direction.North, direction.South, direction.East, direction.West:
 		fallthrough
-	case action.NorthEast, action.NorthWest:
+	case direction.NorthEast, direction.NorthWest:
 		fallthrough
-	case action.SouthEast, action.SouthWest:
+	case direction.SouthEast, direction.SouthWest:
 		metadata := bl.entities[eid]
-		offset := action.Directions[dir]
+		offset := direction.Directions[dir]
 		newx := metadata.xPosition + offset.X
 		newy := metadata.yPosition + offset.Y
 		if (newx < 0) || (newx >= XWidth) || 
