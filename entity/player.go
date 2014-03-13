@@ -20,3 +20,8 @@ func (p *Player) NextAction() (action Action) {
 func (p *Player) SetAction(action Action) {
 	*p.currentAction = action
 }
+
+func NewPlayer() Entity {
+	p := new(Player)
+	p.id = NewEntityID()
+}

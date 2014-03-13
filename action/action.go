@@ -11,3 +11,6 @@ type Move struct {
 	Dir Direction
 }
 func (Move) ActionType(){}
+
+type Skip struct{}
+func (Skip) ActionType(){}

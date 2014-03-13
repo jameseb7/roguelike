@@ -101,7 +101,7 @@ func (bl *baseLevel) Run() action.Action {
 			if e == nil {
 				bl.actors.Remove(bl.currentActor)
 			}
-			a := e.entity.(Actor)
+			a := e.entity.(entity.Actor)
 			switch act := a.NextAction().(type) {
 			case Player: 
 				return act
@@ -110,6 +110,9 @@ func (bl *baseLevel) Run() action.Action {
 			}
 		}
 		bl.currentActor = bl.actors.Front()
+		if bl.currentActor == nil {
+			return action.Skip{}
+		}
 	}
 }
 
