@@ -140,6 +140,8 @@ func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) {
 		
 		bl.cells[newx][newy].occupant = eid
 		bl.cells[metadata.xPosition][metadata.yPosition].occupant = 0
+		metadata.xPosition = newx
+		metadata.yPosition = newy
 	}
 	return
 }
