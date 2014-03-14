@@ -3,9 +3,14 @@ package main
 import "math/rand"
 import "time"
 
-import "github.com/jameseb7/roguelike/regions"
-import "github.com/jameseb7/roguelike/player"
-import "github.com/jameseb7/roguelike/types"
+import (
+	"github.com/jameseb7/roguelike/entity"
+	"github.com/jameseb7/roguelike/level"
+	"github.com/jameseb7/roguelike/action"
+	"github.com/jameseb7/roguelike/direction"
+)
+
+
 
 //#cgo LDFLAGS: -lncurses
 //#include <curses.h>
@@ -27,7 +32,8 @@ func endCurses() {
 	C.endwin()
 }
 
-var p *player.Player
+var player *entity.Player
+var currentLevel level.Level
 var quit = false
 
 func main() {
@@ -36,40 +42,38 @@ func main() {
 	initCurses()
 	defer endCurses()
 
-	var r = regions.Make(regions.TEST)
-	p = new(player.Player)
-	r.Level(0).Put(p, 40, 10)
-	r.Level(0).AddActor(p)
-
-	player.SetStopCallback(setStop)
+	currentLevel = level.New(level.Empty)
+	player = entity.NewPlayer()
+	currentLevel.Put(player, 40, 13)
 
 	drawCurrentLevel()
 
 	for !quit {
+		var a action.Action
+
 		switch ch := C.getch(); ch {
 		case C.KEY_UP, 'k', '8':
-			runCommand(1, MOVE, types.NORTH)
+			a = action.Move{direction.North}
 		case C.KEY_DOWN, 'j', '2':
-			runCommand(1, MOVE, types.SOUTH)
+			a = action.Move{direction.South}
 		case C.KEY_RIGHT, 'l', '6':
-			runCommand(1, MOVE, types.EAST)
+			a = action.Move{direction.East}
 		case C.KEY_LEFT, 'h', '4':
-			runCommand(1, MOVE, types.WEST)
+			a = action.Move{direction.West}
 		case 'y', '7':
-			runCommand(1, MOVE, types.NORTHWEST)
+			a = action.Move{direction.NorthWest}
 		case 'u', '9':
-			runCommand(1, MOVE, types.NORTHEAST)
+			a = action.Move{direction.NorthEast}
 		case 'm', '3':
-			runCommand(1, MOVE, types.SOUTHEAST)
+			a = action.Move{direction.SouthEast}
 		case 'n', '1':
-			runCommand(1, MOVE, types.SOUTHWEST)
-		case '<':
-			runCommand(1, MOVE, types.UP)
-		case '>':
-			runCommand(1, MOVE, types.DOWN)
+			a = action.Move{direction.SouthWest}
 		case 'q':
 			quit = true
 		}
+
+		player.SetAction(a)
+		currentLevel.Run()
 		drawCurrentLevel()
 	}
 

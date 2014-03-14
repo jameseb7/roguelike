@@ -2,15 +2,16 @@ package level
 
 import "container/list"
 
-import "entity"
-import "action"
-import "symbol"
+import "github.com/jameseb7/roguelike/entity"
+import "github.com/jameseb7/roguelike/action"
+import "github.com/jameseb7/roguelike/symbol"
+import "github.com/jameseb7/roguelike/direction"
 
 type Level interface{
 	SymbolAt(x, y int) symbol.Symbol
 
 	Put(e entity.Entity, x, y int) (ok bool)
-	Remove(e entity.ID) (ok bool, e entity.Entity)
+	Remove(eid entity.ID) (ok bool, e entity.Entity)
 
 	Run() action.Action
 }
@@ -56,7 +57,7 @@ func (bl *baseLevel) Put(e entity.Entity, x, y int) (ok bool) {
 		return false
 	}
 
-	if bl.cells[x][y].occupant != nil {
+	if bl.cells[x][y].occupant != 0 {
 		return false
 	}
 
@@ -67,7 +68,7 @@ func (bl *baseLevel) Put(e entity.Entity, x, y int) (ok bool) {
 	metadata.yPosition = y
 	metadata.entity = e
 
-	if _, ok := e.(Actor); ok {
+	if _, ok := e.(entity.Actor); ok {
 		ts := bl.actors.PushBack(e.EntityID())
 		metadata.turnSlot = ts
 	}
@@ -77,17 +78,17 @@ func (bl *baseLevel) Put(e entity.Entity, x, y int) (ok bool) {
 }
 
 func (bl *baseLevel) Remove(eid entity.ID) (ok bool, e entity.Entity) {
-	metadata := bl.entites[eid]
+	metadata := bl.entities[eid]
 	if metadata == nil {
-		return false
+		return false, nil
 	}
 
-	bl.cells[xPosition][yPosition].occupant = nil
+	bl.cells[metadata.xPosition][metadata.yPosition].occupant = 0
 	if metadata.turnSlot != nil {
-		_ = bl.actors.remove(metadata.turnSlot)
+		_ = bl.actors.Remove(metadata.turnSlot)
 	}
 	e = metadata.entity
-	delete(bl.entites, eid)
+	delete(bl.entities, eid)
 
 	ok = true
 	return
@@ -95,17 +96,17 @@ func (bl *baseLevel) Remove(eid entity.ID) (ok bool, e entity.Entity) {
 
 func (bl *baseLevel) Run() action.Action {
 	for {
-		for ; bl.currentActor != nil; e = e.Next() {
+		for ; bl.currentActor != nil; bl.currentActor = bl.currentActor.Next() {
 			eid := bl.currentActor.Value.(entity.ID)
-			e := bl.entites[eid]
+			e := bl.entities[eid]
 			if e == nil {
 				bl.actors.Remove(bl.currentActor)
 			}
 			a := e.entity.(entity.Actor)
 			switch act := a.NextAction().(type) {
-			case Player: 
+			case action.Player: 
 				return act
-			case Move: 
+			case action.Move: 
 				bl.move(eid, act.Dir)
 			}
 		}
@@ -132,13 +133,13 @@ func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) {
 			return
 		}
 
-		if bl.cells[newx][newy].occupant != nil {
+		if bl.cells[newx][newy].occupant != 0 {
 			return
 		}
 
 		
 		bl.cells[newx][newy].occupant = eid
-		bl.cells[metadata.xPosition][metadata.yPosition].occupant = nil
+		bl.cells[metadata.xPosition][metadata.yPosition].occupant = 0
 	}
 	return
 }

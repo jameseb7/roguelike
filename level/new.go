@@ -1,19 +1,23 @@
 package level
 
-import "list"
+import "container/list"
 
-type LevelType
+import "github.com/jameseb7/roguelike/entity"
+
+type LevelType int
+
 const (
 	Empty LevelType = iota
 )
 
-func New(lt int) Level {
+func New(lt LevelType) Level {
 	newLevel := new(baseLevel)
 
-	switch levelType {
+	switch lt {
 	case Empty:
 		//all cells blank is the zero value for level
 		newLevel.entities = make(map[entity.ID] *entityMetadata, 100)
 		newLevel.actors = list.New()
 	}
+	return newLevel
 }

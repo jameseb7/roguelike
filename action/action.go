@@ -1,6 +1,6 @@
 package action
 
-import "direction"
+import "github.com/jameseb7/roguelike/direction"
 
 type Action interface {
 	ActionType() //no-op to distinguish Actions

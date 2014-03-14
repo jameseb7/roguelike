@@ -10,7 +10,7 @@ const (
 	West
 	NorthEast
 	NorthWest
-	SouthWast
+	SouthEast
 	SouthWest
 
 	Up

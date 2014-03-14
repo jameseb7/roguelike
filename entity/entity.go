@@ -10,7 +10,7 @@ type Entity interface {
 	EntitySymbol() symbol.Symbol
 }
 
-var currentID uint64 = 0
+var currentID ID = 0
 
 func NewEntityID() ID {
 	currentID++
