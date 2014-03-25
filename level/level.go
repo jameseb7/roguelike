@@ -18,12 +18,6 @@ type Level interface{
 
 const XWidth = 80
 const YWidth = 20
-
-type cellType struct{
-	baseSymbol symbol.Symbol
-	occupant entity.ID
-}
-
 type entityMetadata struct{
 	xPosition int
 	yPosition int
@@ -133,7 +127,7 @@ func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) {
 			return
 		}
 
-		if bl.cells[newx][newy].occupant != 0 {
+		if bl.cells[newx][newy].blocksMovement() {
 			return
 		}
 

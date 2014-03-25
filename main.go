@@ -42,7 +42,7 @@ func main() {
 	initCurses()
 	defer endCurses()
 
-	currentLevel = level.New(level.Empty)
+	currentLevel = level.New(level.Test)
 	player = entity.NewPlayer()
 	currentLevel.Put(player, 40, 13)
 
