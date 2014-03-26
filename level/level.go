@@ -14,6 +14,8 @@ type Level interface{
 	Remove(eid entity.ID) (ok bool, e entity.Entity)
 
 	Run() action.Action
+	
+	Turn() int
 }
 
 const XWidth = 80
@@ -27,9 +29,12 @@ type entityMetadata struct{
 
 type baseLevel struct{
 	cells [XWidth][YWidth]cellType
+	
 	entities map[entity.ID] *entityMetadata
 	actors *list.List
 	currentActor *list.Element
+
+	turn int
 }
 
 func (bl *baseLevel) SymbolAt(x,y int) symbol.Symbol {
@@ -90,6 +95,12 @@ func (bl *baseLevel) Remove(eid entity.ID) (ok bool, e entity.Entity) {
 
 func (bl *baseLevel) Run() action.Action {
 	for {
+		if bl.currentActor == nil {
+			bl.currentActor = bl.actors.Front()
+			if bl.currentActor == nil {
+				return action.Skip{}
+			}
+		}
 		for ; bl.currentActor != nil; bl.currentActor = bl.currentActor.Next() {
 			eid := bl.currentActor.Value.(entity.ID)
 			e := bl.entities[eid]
@@ -97,21 +108,30 @@ func (bl *baseLevel) Run() action.Action {
 				bl.actors.Remove(bl.currentActor)
 			}
 			a := e.entity.(entity.Actor)
-			switch act := a.NextAction().(type) {
-			case action.Player: 
-				return act
-			case action.Move: 
-				bl.move(eid, act.Dir)
+			for actionDone := false; !actionDone; {
+				switch act := a.NextAction().(type) {
+				case action.Player: 
+					return act
+				case action.Move: 
+					unresolved, impossible := bl.move(eid, act.Dir)
+					if unresolved {
+						return act
+					}
+					if !impossible {
+						actionDone = true
+					}
+				}
 			}
 		}
-		bl.currentActor = bl.actors.Front()
-		if bl.currentActor == nil {
-			return action.Skip{}
-		}
+		bl.turn++
 	}
 }
 
-func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) {
+func (bl *baseLevel) Turn() int {
+	return bl.turn
+}
+
+func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) (unresolved, impossible bool){
 	switch dir {
 	case direction.North, direction.South, direction.East, direction.West:
 		fallthrough
@@ -122,12 +142,13 @@ func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) {
 		offset := direction.Directions[dir]
 		newx := metadata.xPosition + offset.X
 		newy := metadata.yPosition + offset.Y
-		if (newx < 0) || (newx >= XWidth) || 
-			(newy < 0) || (newy >= YWidth) {
+		if (newx < 0) || (newx >= XWidth) || (newy < 0) || (newy >= YWidth) {
+			impossible = true
 			return
 		}
 
 		if bl.cells[newx][newy].blocksMovement() {
+			impossible = true
 			return
 		}
 
@@ -136,6 +157,9 @@ func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) {
 		bl.cells[metadata.xPosition][metadata.yPosition].occupant = 0
 		metadata.xPosition = newx
 		metadata.yPosition = newy
+	default:
+		unresolved = true
+		return
 	}
 	return
 }

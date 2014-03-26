@@ -47,6 +47,7 @@ func main() {
 	currentLevel.Put(player, 40, 13)
 
 	drawCurrentLevel()
+	drawInfoBar()
 
 	for !quit {
 		var a action.Action
@@ -75,6 +76,7 @@ func main() {
 		player.SetAction(a)
 		currentLevel.Run()
 		drawCurrentLevel()
+		drawInfoBar()
 	}
 
 }

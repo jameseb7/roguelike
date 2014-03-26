@@ -17,6 +17,7 @@ func New(lt LevelType) Level {
 
 	newLevel.entities = make(map[entity.ID] *entityMetadata, 100)
 	newLevel.actors = list.New()
+	newLevel.turn = 1
 
 	switch lt {
 	case Empty:

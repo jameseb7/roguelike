@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 import "github.com/jameseb7/roguelike/symbol"
 import "github.com/jameseb7/roguelike/level"
 
@@ -35,4 +37,10 @@ func drawLevel(l level.Level) {
 
 func drawCurrentLevel() {
 	drawLevel(currentLevel)
+}
+
+func drawInfoBar() {
+	cx, cy := C.int(0), C.int(level.YWidth)
+	C.mvaddstr(cy, cx, C.CString("T: "))
+	C.addstr(C.CString(fmt.Sprint(currentLevel.Turn())))
 }
