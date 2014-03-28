@@ -8,6 +8,8 @@ import "github.com/jameseb7/roguelike/symbol"
 import "github.com/jameseb7/roguelike/direction"
 
 type Level interface{
+	entity.Context
+	
 	SymbolAt(x, y int) symbol.Symbol
 
 	Put(e entity.Entity, x, y int) (ok bool)
@@ -109,7 +111,7 @@ func (bl *baseLevel) Run() action.Action {
 			}
 			a := e.entity.(entity.Actor)
 			for actionDone := false; !actionDone; {
-				switch act := a.NextAction().(type) {
+				switch act := a.NextAction(bl).(type) {
 				case action.Player: 
 					return act
 				case action.Move: 
@@ -162,4 +164,21 @@ func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) (unresolved, i
 		return
 	}
 	return
+}
+
+func (bl *baseLevel) EntityNameByID(eid entity.ID) string {
+	return bl.entities[eid].entity.EntityName()
+}
+func (bl *baseLevel) EntitySymbolByID(eid entity.ID) symbol.Symbol {
+	return bl.entities[eid].entity.EntitySymbol()
+}
+func (bl *baseLevel) EntitySizeByID(eid entity.ID) int {
+	return bl.entities[eid].entity.Size()
+}
+func (bl *baseLevel) EntityContents(eid entity.ID) []entity.ID {
+	if c, ok := bl.entities[eid].entity.(entity.Container); ok {
+		return c.ListContents()
+	} else {
+		return nil
+	}
 }

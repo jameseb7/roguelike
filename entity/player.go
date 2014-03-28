@@ -12,11 +12,19 @@ func (p Player) EntityID() ID {
 	return p.id
 }
 
+func (p *Player) EntityName() string {
+	return "Player"
+}
+
 func (p Player) EntitySymbol() symbol.Symbol {
 	return symbol.Player
 }
 
-func (p *Player) NextAction() (a action.Action) { 
+func (p *Player) Size() int {
+	return Large
+}
+
+func (p *Player) NextAction(c Context) (a action.Action) { 
 	if p.currentAction == nil {
 		return action.Player{}
 	}
