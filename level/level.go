@@ -11,6 +11,7 @@ type Level interface{
 	entity.Context
 	
 	SymbolAt(x, y int) symbol.Symbol
+	ItemsAt(x, y int) []entity.ID
 
 	Put(e entity.Entity, x, y int) (ok bool)
 	Remove(eid entity.ID) (ok bool, e entity.Entity)
@@ -50,25 +51,59 @@ func (bl *baseLevel) SymbolAt(x,y int) symbol.Symbol {
 			return bl.entities[occupantID].entity.EntitySymbol()
 		}
 	}
+
+	itemElement := bl.cells[x][y].items.Front()
+	if itemElement != nil {
+		itemID := itemElement.Value.(entity.ID)
+		if bl.entities[itemID] != nil {
+			if bl.entities[itemID].entity != nil {
+				return bl.entities[itemID].entity.EntitySymbol()
+			}
+		}
+	}
+	
 	return bl.cells[x][y].baseSymbol
+}
+
+func (bl *baseLevel) ItemsAt(x,y int) []entity.ID {
+	if (x < 0) || (x >= XWidth) || (y < 0) || (y >= YWidth) {
+		return nil
+	}
+
+	itemSlice := make([]entity.ID, 0, bl.cells[x][y].items.Len())
+	for item := bl.cells[x][y].items.Front(); item != nil; item = item.Next() {
+		if eid := item.Value.(entity.ID); bl.entities[eid] != nil {
+			itemSlice = append(itemSlice, eid)
+		} else {
+			//nonexistent items shouldn't be in the cell item list
+			tmp := item.Prev()
+			bl.cells[x][y].items.Remove(item)
+			item = tmp
+		}
+	}
+
+	return itemSlice
 }
 
 func (bl *baseLevel) Put(e entity.Entity, x, y int) (ok bool) {
 	if (x < 0) || (x >= XWidth) || (y < 0) || (y >= YWidth) {
 		return false
 	}
-
-	if bl.cells[x][y].occupant != 0 {
-		return false
+	if e.Size() >= entity.Large {
+		if bl.cells[x][y].occupant != 0 {
+			return false
+		}
+		
+		bl.cells[x][y].occupant = e.EntityID()
+	} else {
+		bl.cells[x][y].items.PushFront(e.EntityID())
 	}
-
-	bl.cells[x][y].occupant = e.EntityID()
 
 	metadata := new(entityMetadata)
 	metadata.xPosition = x
 	metadata.yPosition = y
 	metadata.entity = e
-
+	
 	if _, ok := e.(entity.Actor); ok {
 		ts := bl.actors.PushBack(e.EntityID())
 		metadata.turnSlot = ts
@@ -166,19 +201,6 @@ func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) (unresolved, i
 	return
 }
 
-func (bl *baseLevel) EntityNameByID(eid entity.ID) string {
-	return bl.entities[eid].entity.EntityName()
-}
-func (bl *baseLevel) EntitySymbolByID(eid entity.ID) symbol.Symbol {
-	return bl.entities[eid].entity.EntitySymbol()
-}
-func (bl *baseLevel) EntitySizeByID(eid entity.ID) int {
-	return bl.entities[eid].entity.Size()
-}
-func (bl *baseLevel) EntityContents(eid entity.ID) []entity.ID {
-	if c, ok := bl.entities[eid].entity.(entity.Container); ok {
-		return c.ListContents()
-	} else {
-		return nil
-	}
+func (bl *baseLevel) EntityByID(eid entity.ID) entity.ConstEntity {
+	return bl.entities[eid].entity
 }

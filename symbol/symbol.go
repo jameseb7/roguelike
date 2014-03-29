@@ -7,6 +7,9 @@ const(
 	Floor
 	HWall
 	VWall
+	Rock
 
 	Player
+	
+	Stone
 )

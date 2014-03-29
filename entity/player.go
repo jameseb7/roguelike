@@ -6,6 +6,7 @@ import "github.com/jameseb7/roguelike/symbol"
 type Player struct{
 	id ID
 	currentAction action.Action
+	*inventory
 }
 
 func (p Player) EntityID() ID {

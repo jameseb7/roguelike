@@ -20,8 +20,12 @@ func drawSymbol(x, y int, s symbol.Symbol) {
 		C.mvaddch(cy, cx, '-')
 	case symbol.VWall:
 		C.mvaddch(cy, cx, '|')
+	case symbol.Rock:
+		C.mvaddch(cy, cx, '#')
 	case symbol.Player:
 		C.mvaddch(cy, cx, '@')
+	case symbol.Stone:
+		C.mvaddch(cy, cx, '*')
 	default:
 		C.mvaddch(cy, cx, '\000')
 	}

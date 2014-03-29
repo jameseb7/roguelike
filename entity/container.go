@@ -2,20 +2,24 @@ package entity
 
 import "sort"
 
+type ConstContainer interface {
+	ListContents() []ID
+}
+
 type Container interface {
+	ConstContainer
 	AddItem(eid ID)
 	RemoveItem(eid ID)
-	ListContents() []ID
 }
 
 type inventory map[ID]bool
 
-func (inv inventory) AddItem(eid ID) {
-	inv[eid] = true
+func (inv *inventory) AddItem(eid ID) {
+	(*inv)[eid] = true
 }
 
-func (inv inventory) RemoveItem(eid ID) {
-	delete(inv,eid)
+func (inv *inventory) RemoveItem(eid ID) {
+	delete(*inv,eid)
 }
 
 func (inv inventory) ListContents() []ID {

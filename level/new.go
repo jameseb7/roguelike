@@ -1,6 +1,7 @@
 package level
 
 import "container/list"
+import "math/rand"
 
 import "github.com/jameseb7/roguelike/entity"
 import "github.com/jameseb7/roguelike/symbol"
@@ -35,6 +36,12 @@ func New(lt LevelType) Level {
 		for x := 0; x < XWidth; x++ {
 			newLevel.cells[x][0].baseSymbol = symbol.HWall
 			newLevel.cells[x][YWidth-1].baseSymbol = symbol.HWall
+		}
+
+		for i := 0; i < 10; i++ {
+			x := rand.Intn(XWidth-2) + 1
+			y := rand.Intn(YWidth-2) + 1
+			newLevel.Put(entity.NewItem(entity.Stone), x, y)
 		}
 	}
 	

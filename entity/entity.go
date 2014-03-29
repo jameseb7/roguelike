@@ -5,12 +5,15 @@ import "github.com/jameseb7/roguelike/symbol"
 
 type ID uint64
 
-type Entity interface {
+type ConstEntity interface {
 	EntityID() ID
 	EntityName() string
 	EntitySymbol() symbol.Symbol
-
 	Size() int
+}
+
+type Entity interface {
+	ConstEntity
 }
 
 const (
@@ -29,10 +32,7 @@ func NewEntityID() ID {
 }
 
 type Context interface {
-	EntityNameByID(eid ID) string
-	EntitySymbolByID(eid ID) symbol.Symbol
-	EntitySizeByID(eid ID) int
-	EntityContents(eid ID) []ID
+	EntityByID(eid ID) ConstEntity
 }
 
 type Actor interface {
