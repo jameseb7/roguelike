@@ -41,5 +41,7 @@ func (p *Player) SetAction(a action.Action) {
 func NewPlayer() *Player {
 	p := new(Player)
 	p.id = NewEntityID()
+	p.inventory = new(inventory)
+	*p.inventory = make(inventory, 52)
 	return p
 }

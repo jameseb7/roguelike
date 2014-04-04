@@ -69,6 +69,10 @@ func main() {
 			a = action.Move{direction.SouthEast}
 		case 'n', '1':
 			a = action.Move{direction.SouthWest}
+		case 'i':
+			updateInventory()
+			displayInventory()
+			C.getch()
 		case 'q':
 			quit = true
 		}
