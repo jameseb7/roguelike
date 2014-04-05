@@ -19,6 +19,12 @@ func New(lt LevelType) Level {
 	newLevel.entities = make(map[entity.ID] *entityMetadata, 100)
 	newLevel.actors = list.New()
 	newLevel.turn = 1
+	
+	for x := 0; x < XWidth; x++ {
+		for y := 0; y < YWidth; y++ {
+			newLevel.cells[x][y].items = list.New()
+		}
+	}
 
 	switch lt {
 	case Empty:

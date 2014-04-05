@@ -6,7 +6,6 @@ import "time"
 import (
 	"github.com/jameseb7/roguelike/entity"
 	"github.com/jameseb7/roguelike/level"
-	"github.com/jameseb7/roguelike/action"
 	"github.com/jameseb7/roguelike/direction"
 )
 
@@ -50,29 +49,32 @@ func main() {
 	drawInfoBar()
 
 	for !quit {
-		var a action.Action
+		var a entity.Action
 
 		switch ch := C.getch(); ch {
 		case C.KEY_UP, 'k', '8':
-			a = action.Move{direction.North}
+			a = entity.MoveAction{direction.North}
 		case C.KEY_DOWN, 'j', '2':
-			a = action.Move{direction.South}
+			a = entity.MoveAction{direction.South}
 		case C.KEY_RIGHT, 'l', '6':
-			a = action.Move{direction.East}
+			a = entity.MoveAction{direction.East}
 		case C.KEY_LEFT, 'h', '4':
-			a = action.Move{direction.West}
+			a = entity.MoveAction{direction.West}
 		case 'y', '7':
-			a = action.Move{direction.NorthWest}
+			a = entity.MoveAction{direction.NorthWest}
 		case 'u', '9':
-			a = action.Move{direction.NorthEast}
+			a = entity.MoveAction{direction.NorthEast}
 		case 'm', '3':
-			a = action.Move{direction.SouthEast}
+			a = entity.MoveAction{direction.SouthEast}
 		case 'n', '1':
-			a = action.Move{direction.SouthWest}
+			a = entity.MoveAction{direction.SouthWest}
 		case 'i':
 			updateInventory()
 			displayInventory()
 			C.getch()
+		case ',':
+			items := displayPickUpChoice()
+			a = entity.PickUpAction{items}
 		case 'q':
 			quit = true
 		}

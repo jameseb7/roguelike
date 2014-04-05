@@ -3,7 +3,6 @@ package level
 import "container/list"
 
 import "github.com/jameseb7/roguelike/entity"
-import "github.com/jameseb7/roguelike/action"
 import "github.com/jameseb7/roguelike/symbol"
 import "github.com/jameseb7/roguelike/direction"
 
@@ -13,10 +12,12 @@ type Level interface{
 	SymbolAt(x, y int) symbol.Symbol
 	ItemsAt(x, y int) []entity.ID
 
+	EntityLocation(eid entity.ID) (x, y int) 
+
 	Put(e entity.Entity, x, y int) (ok bool)
 	Remove(eid entity.ID) (ok bool, e entity.Entity)
 
-	Run() action.Action
+	Run() entity.Action
 	
 	Turn() int
 }
@@ -130,12 +131,12 @@ func (bl *baseLevel) Remove(eid entity.ID) (ok bool, e entity.Entity) {
 	return
 }
 
-func (bl *baseLevel) Run() action.Action {
+func (bl *baseLevel) Run() entity.Action {
 	for {
 		if bl.currentActor == nil {
 			bl.currentActor = bl.actors.Front()
 			if bl.currentActor == nil {
-				return action.Skip{}
+				return entity.SkipAction{}
 			}
 		}
 		for ; bl.currentActor != nil; bl.currentActor = bl.currentActor.Next() {
@@ -147,9 +148,9 @@ func (bl *baseLevel) Run() action.Action {
 			a := e.entity.(entity.Actor)
 			for actionDone := false; !actionDone; {
 				switch act := a.NextAction(bl).(type) {
-				case action.Player: 
+				case entity.PlayerAction: 
 					return act
-				case action.Move: 
+				case entity.MoveAction: 
 					unresolved, impossible := bl.move(eid, act.Dir)
 					if unresolved {
 						return act
@@ -157,10 +158,20 @@ func (bl *baseLevel) Run() action.Action {
 					if !impossible {
 						actionDone = true
 					}
+				case entity.SkipAction:
+					actionDone = true
+				case entity.PickUpAction:
+					x, y := e.xPosition, e.yPosition
+					for _, v := range act.Items {
+						if bl.cells[x][y].removeEntity(v) {
+							c := a.(entity.Container)
+							c.AddItem(v)
+						}
+					}
 				}
 			}
-		}
 		bl.turn++
+		}
 	}
 }
 
@@ -203,4 +214,12 @@ func (bl *baseLevel) move(eid entity.ID, dir direction.Direction) (unresolved, i
 
 func (bl *baseLevel) EntityByID(eid entity.ID) entity.ConstEntity {
 	return bl.entities[eid].entity
+}
+
+func (bl *baseLevel) EntityLocation(eid entity.ID) (x, y int) {
+	e := bl.entities[eid]
+	if e != nil {
+		return e.xPosition, e.yPosition
+	}
+	return -1, -1
 }

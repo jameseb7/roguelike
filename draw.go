@@ -5,6 +5,7 @@ import "unsafe"
 
 import "github.com/jameseb7/roguelike/symbol"
 import "github.com/jameseb7/roguelike/level"
+import "github.com/jameseb7/roguelike/entity"
 
 //#cgo LDFLAGS: -lncurses
 //#include <curses.h>
@@ -70,4 +71,53 @@ func displayInventory(){
 			C.addch(C.chtype('\n'))
 		}
 	}
+}
+
+func displayPickUpChoice() []entity.ID {
+	var str *C.char
+	C.clear()
+	C.move(0,0)
+	str = C.CString("Pick up what?\n")
+	C.addstr(str)
+	C.free(unsafe.Pointer(str))
+
+	px, py := currentLevel.EntityLocation(player.EntityID())
+	itemsAvailable := currentLevel.ItemsAt(px, py)
+	for i, eid := range itemsAvailable {
+		C.addch(C.chtype(inventoryChar(byte(i))))
+		str = C.CString(" - ")
+		C.addstr(str)
+		C.free(unsafe.Pointer(str))
+		str = C.CString(currentLevel.EntityByID(eid).EntityName())
+		C.addstr(str)
+		C.free(unsafe.Pointer(str))
+	}
+
+	itemsChosen := make([]bool, len(itemsAvailable))
+	for {
+		ch := C.getch()
+		if ch == C.KEY_ENTER || ch == ' ' || ch == '\n'  {
+			break
+		}
+		if ch > C.int(255) {
+			continue
+		}
+		if i := inventoryIndex(byte(ch)); i != 255 {
+			if itemsChosen[i] {
+				itemsChosen[i] = false
+				C.mvaddch(C.int(i+1), 2, C.chtype('-'))
+			} else {
+				itemsChosen[i] = true
+				C.mvaddch(C.int(i+1), 2, C.chtype('+'))
+			}
+		}
+	}
+	
+	result := make([]entity.ID, 0, len(itemsAvailable))
+	for i, v := range itemsChosen {
+		if v {
+			result = append(result, itemsAvailable[i])
+		}
+	}
+	return result
 }

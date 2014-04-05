@@ -1,6 +1,5 @@
 package entity
 
-import "github.com/jameseb7/roguelike/action"
 import "github.com/jameseb7/roguelike/symbol"
 
 type ID uint64
@@ -37,5 +36,5 @@ type Context interface {
 
 type Actor interface {
 	Entity
-	NextAction(c Context) action.Action
+	NextAction(c Context) Action
 }
