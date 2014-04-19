@@ -8,6 +8,7 @@ type ConstEntity interface {
 	EntityID() ID
 	EntityName() string
 	EntitySymbol() symbol.Symbol
+	EntityItemType() ItemType
 	Size() int
 }
 

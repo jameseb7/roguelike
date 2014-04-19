@@ -165,12 +165,28 @@ func (bl *baseLevel) Run() entity.Action {
 					for _, v := range act.Items {
 						if bl.cells[x][y].removeEntity(v) {
 							c := a.(entity.Container)
-							c.AddItem(v)
+							if item := bl.entities[v].entity; item != nil {
+								if stackable, ok := item.(entity.Stackable); ok {
+									stackEID := c.ItemOfType(stackable.EntityItemType())
+									if bl.entities[stackEID] != nil { 
+										stackEntity := bl.entities[stackEID].entity.(entity.Stackable)
+										if stackEntity.EntityItemType() == stackable.EntityItemType() {
+											stackEntity.Add(stackable.Count())
+										}
+									} else {
+										c.AddItem(v, item.EntityItemType())
+									}
+								} else {
+									c.AddItem(v, item.EntityItemType())
+								}
+							}
 						}
 					}
+				default:
+					return act
 				}
 			}
-		bl.turn++
+			bl.turn++
 		}
 	}
 }

@@ -20,6 +20,10 @@ func (p Player) EntitySymbol() symbol.Symbol {
 	return symbol.Player
 }
 
+func (p Player) EntityItemType() ItemType {
+	return None
+}
+
 func (p *Player) Size() int {
 	return Large
 }
@@ -40,7 +44,6 @@ func (p *Player) SetAction(a Action) {
 func NewPlayer() *Player {
 	p := new(Player)
 	p.id = NewEntityID()
-	p.inventory = new(inventory)
-	*p.inventory = make(inventory, 52)
+	p.inventory = newInventory()
 	return p
 }

@@ -102,7 +102,8 @@ func displayPickUpChoice() []entity.ID {
 		if ch > C.int(255) {
 			continue
 		}
-		if i := inventoryIndex(byte(ch)); i != 255 {
+		if i := inventoryIndex(byte(ch)); (int(i) < len(itemsChosen)) && 
+			(i != 255) {
 			if itemsChosen[i] {
 				itemsChosen[i] = false
 				C.mvaddch(C.int(i+1), 2, C.chtype('-'))
