@@ -75,4 +75,10 @@ func updateInventory(){
 		}
 	}
 	
+	//update item names
+	for _, v := range inventory {
+		if v != nil {
+			v.name = currentLevel.EntityByID(v.id).EntityName()
+		}
+	}
 }

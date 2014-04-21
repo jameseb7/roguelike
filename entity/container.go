@@ -1,6 +1,7 @@
 package entity
 
 import "sort"
+import "log"
 
 type ConstContainer interface {
 	ListContents() []ID
@@ -30,6 +31,7 @@ func (inv *inventory) AddItem(eid ID, t ItemType) {
 	if inv.types[t] == 0 {
 		inv.types[t] = eid
 	}
+	log.Println("Item", eid, "added. Inventory contents:", inv.ListContents())
 }
 
 func (inv *inventory) RemoveItem(eid ID, t ItemType) {

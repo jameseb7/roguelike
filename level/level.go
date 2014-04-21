@@ -1,6 +1,7 @@
 package level
 
 import "container/list"
+import "log"
 
 import "github.com/jameseb7/roguelike/entity"
 import "github.com/jameseb7/roguelike/symbol"
@@ -163,15 +164,19 @@ func (bl *baseLevel) Run() entity.Action {
 				case entity.PickUpAction:
 					x, y := e.xPosition, e.yPosition
 					for _, v := range act.Items {
-						if bl.cells[x][y].removeEntity(v) {
+						if ok := bl.cells[x][y].removeEntity(v); ok { //check the requested entity is available to pickup
 							c := a.(entity.Container)
-							if item := bl.entities[v].entity; item != nil {
+							if item := bl.entities[v].entity; item != nil { //check that the requested entity actually exists
 								if stackable, ok := item.(entity.Stackable); ok {
+									//handle stackable items
+									log.Println("Item", v, "is stackable")
 									stackEID := c.ItemOfType(stackable.EntityItemType())
 									if bl.entities[stackEID] != nil { 
+										log.Println("Already a stackable item", stackEID, "of the same type as", v)
 										stackEntity := bl.entities[stackEID].entity.(entity.Stackable)
 										if stackEntity.EntityItemType() == stackable.EntityItemType() {
 											stackEntity.Add(stackable.Count())
+											log.Println("Total items in stack:", stackEntity.Count()) 
 										}
 									} else {
 										c.AddItem(v, item.EntityItemType())

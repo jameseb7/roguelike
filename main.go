@@ -2,6 +2,8 @@ package main
 
 import "math/rand"
 import "time"
+import "log"
+import "os"
 
 import (
 	"github.com/jameseb7/roguelike/entity"
@@ -37,7 +39,12 @@ var quit = false
 
 func main() {
 	rand.Seed(time.Now().Unix())
-	
+	logfile, err := os.Create("roguelike.log")
+	if err != nil {
+		panic(err)
+	}
+	log.SetOutput(logfile)
+
 	initCurses()
 	defer endCurses()
 
